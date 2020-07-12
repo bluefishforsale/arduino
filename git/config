@@ -1,0 +1,14 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+	ignorecase = true
+	precomposeunicode = true
+	sshCommand = ssh -i ~/.ssh/id_bluefish_lap -F /dev/null
+[remote "origin"]
+	url = git@github.com:bluefishforsale/homelab.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master

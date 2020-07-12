@@ -6,6 +6,7 @@
 #define OFFSET 96
 #define REP 1
 #define SPEED 1
+#define DIRECTION "forward"
 
 // neopixel strip setup
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(SIZE, PIN, NEO_GRB + NEO_KHZ800);
@@ -26,7 +27,7 @@ void loop() {
 void MirrorRainbow() {
   uint16_t i, j;
   uint16_t a_size = strip.numPixels();
-  for(j=256; j >= 0; j--) {
+  for(j=1; j >= 0; j--) {  // moves the colors, but does not need a large range. just needs to exist in a direction 
     for(i=0; i <= a_size/2 ; i++) {
       strip.setPixelColor(i +OFFSET %a_size, ColorWheel( ((i *256 *REP /strip.numPixels()) +j *SPEED) &255) );
       strip.setPixelColor((a_size-i+OFFSET) %a_size, ColorWheel( ((i *256 *REP /strip.numPixels()) +j *SPEED) &255) );
