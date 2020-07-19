@@ -1,7 +1,7 @@
 #include <Adafruit_NeoPixel.h>
 
 
-#define LED_PIN 6
+#define LED_PIN 10
 #define NUM_LEDS 291
 #define BRIGHTNESS 100
 
@@ -9,17 +9,17 @@
 #define METEOR 1
 #define TRAIL 20
 #define DECAY 35
-#define SPEED 0
+#define SPEED 30
 
 // not a const because we might want to manipulate this
 int OFFSET = NUM_LEDS/REP;
 
-#define POT_PIN 2
+#define POT_PIN 15
 int pot_val = 0;   // variable to store the value coming from the sensor
 int pMin = 0;  //the lowest value that comes out of the potentiometer
 int pMax = 1023; //the highest value that comes out of the potentiometer.
 
-#define COLOR_POT_PIN 3
+#define COLOR_POT_PIN 14
 int color_pot_val = 0;   // variable to store the value coming from the sensor
 
 // neopixel strip setup
@@ -50,7 +50,6 @@ void fadeToBlack(int ledNo, byte fadeValue) {
     // NeoPixel
     uint32_t oldColor;
     uint8_t r, g, b;
-    int value;
    
     oldColor = strip.getPixelColor(ledNo);
     r = (oldColor & 0x00ff0000UL) >> 16;
@@ -71,9 +70,10 @@ void fadeToBlack(int ledNo, byte fadeValue) {
 
 void meteorRain(byte red, byte green, byte blue, byte meteorSize, byte meteorTrailDecay, boolean meteorRandomDecay, int SpeedDelay) {  
   uint32_t color;
+  
   for(int i = 0; i < NUM_LEDS; i++) {
     
-    pot_val  = analogRead(POT_PIN);
+    pot_val  = analogRead(POT_PIN );
     color_pot_val  = analogRead(COLOR_POT_PIN);
     
     int scaled_pot = map(pot_val, pMin, pMax, 1, 99);
@@ -92,24 +92,15 @@ void meteorRain(byte red, byte green, byte blue, byte meteorSize, byte meteorTra
     // draw meteor
     for(int j = 0; j < meteorTrailDecay; j++) {
       if( ( i-j <NUM_LEDS ) && (i-j>=0) ) {
-
-        for (int k=1; k <=REP; k++) {
-          strip.setPixelColor((OFFSET *k +i) %NUM_LEDS, color );
-          strip.setPixelColor((NUM_LEDS -i +(OFFSET*k)) %NUM_LEDS, color );
-
-//        strip.setPixelColor((OFFSET*2 +i) %NUM_LEDS, color );
-//        strip.setPixelColor((NUM_LEDS-i+OFFSET*2) %NUM_LEDS, color );
-//        
-//        strip.setPixelColor((OFFSET*3 +i) %NUM_LEDS, color );
-//        strip.setPixelColor((NUM_LEDS-i+OFFSET*3) %NUM_LEDS, color );
+        for (int k=1; k <=REP; k++) { // generate most bright *spark*
+          strip.setPixelColor((OFFSET *k +i) %NUM_LEDS, color );            // forward 
+          strip.setPixelColor((NUM_LEDS -i +(OFFSET*k)) %NUM_LEDS, color ); // reverse
         }
       }
     }
-    
     strip.show();
-    delay(SpeedDelay);
+    delay(SpeedDelay); 
   }
-//  OFFSET=OFFSET+(OFFSET/3);
 }
 
 uint32_t ColorWheel(byte WheelPos) {
