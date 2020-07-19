@@ -49,8 +49,9 @@ void loop() {
 
 ///// Effects
 //    trails();
-    twinkle();
+//    twinkle();
 //    fadingTrails();
+    rainbow();
 
     render();
     double elapsed = current - previous;
@@ -87,17 +88,17 @@ void trails() {
 void twinkle() {
   // fade brightness all LEDs by decay amount
   for (int j=0; j < NUM_LEDS; j++) {
-      if( random(0,100) < decay_trail*1.5) {
+      if( random(0,100) < decay_trail) {
 //        fadeToBlack(j, map(decay_trail, 0, SIDE_LENGTH, 128, 1) );  // we need to sample the pixel color here
         fadeToBlack(j, decay_trail );  // we need to sample the pixel color here
       }
   }
 
   // draw j random bright spots
-  for ( int j=0; j < decay_trail/2; j++) {
+  for ( int j=0; j < decay_trail/3; j++) {
     if( random(0,100) > decay_trail) {
       i = random(0,NUM_LEDS);
-      strip.setPixelColor(i, fadeColor(color, map(decay_trail, 0, SIDE_LENGTH, 256, 1) ));  // no need to sample color, just reduce brightness proportional to how many we show
+      strip.setPixelColor(i, fadeColor(color, map(decay_trail, 0, SIDE_LENGTH, 255, 128) ));  // no need to sample color, just reduce brightness proportional to how many we show
 //      strip.setPixelColor(i, fadeColor(color, decay_trail) );  // no need to sample color, just reduce brightness proportional to how many we show
     }
   }
@@ -130,6 +131,16 @@ void fadingTrails() {
 }
 
 
+void rainbow() {
+  for(j=0; j < NUM_LEDS; j++) {
+     color = ColorWheel( (j *256 / NUM_LEDS)+i %255 );
+     strip.setPixelColor(j, color);
+  }
+    
+  i=(i+(map(decay_trail, 1, 99, -3, 3))) %256;
+}
+
+
 /////////////////////////  common utility functions
 
 void render() {
@@ -141,7 +152,7 @@ void processInput() {
   decay_pot_val  = analogRead(DECAY_POT_PIN);
   color_pot_val  = analogRead(COLOR_POT_PIN);
   
-  scaled_decay_val = map(decay_pot_val, potMin, potMax, 1, 99   );
+  scaled_decay_val = map(decay_pot_val, potMin, potMax, 1, 99);
   decay_trail = scaled_decay_val;
 
   scaled_color_val = map(color_pot_val, potMin, potMax, 1, 255);
